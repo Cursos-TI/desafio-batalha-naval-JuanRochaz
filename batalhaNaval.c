@@ -1,14 +1,46 @@
 #include <stdio.h>
 
-// Desafio Batalha Naval - MateCheck
-// Este código inicial serve como base para o desenvolvimento do sistema de Batalha Naval.
-// Siga os comentários para implementar cada parte do desafio.
+#define TAMANHO_TABULEIRO 10
+#define TAMANHO_NAVIO 3
 
 int main() {
-    // Nível Novato - Posicionamento dos Navios
-    // Sugestão: Declare uma matriz bidimensional para representar o tabuleiro (Ex: int tabuleiro[5][5];).
-    // Sugestão: Posicione dois navios no tabuleiro, um verticalmente e outro horizontalmente.
-    // Sugestão: Utilize `printf` para exibir as coordenadas de cada parte dos navios.
+    // Declaração e inicialização do tabuleiro
+    int tabuleiro[TAMANHO_TABULEIRO][TAMANHO_TABULEIRO] = {0};
+
+    // Coordenadas iniciais dos navios
+    int linhaNavioHorizontal = 2;
+    int colunaNavioHorizontal = 1;
+
+    int linhaNavioVertical = 5;
+    int colunaNavioVertical = 3;
+
+    // Posiciona o navio horizontal
+    for (int i = 0; i < TAMANHO_NAVIO; i++) {
+        tabuleiro[linhaNavioHorizontal][colunaNavioHorizontal + i] = 3; // 3 representa parte do navio
+    }
+
+    // Posiciona o navio vertical
+    for (int i = 0; i < TAMANHO_NAVIO; i++) {
+        tabuleiro[linhaNavioVertical + i][colunaNavioVertical] = 3; // 3 representa parte do navio
+    }
+
+    // Exibe o título do jogo
+    printf("=== Jogo de Batalha Naval ===\n\n");
+
+    // Exibe o cabeçalho com letras
+    printf("   A B C D E F G H I J\n");
+    
+    // Exibe o tabuleiro com números na lateral
+    for (int i = 0; i < TAMANHO_TABULEIRO; i++) {
+        printf("%2d ", i + 1); // Exibe o número da linha
+        for (int j = 0; j < TAMANHO_TABULEIRO; j++) {
+            printf("%d ", tabuleiro[i][j]); // Exibe cada posição do tabuleiro
+        }
+        printf("\n"); // Nova linha após cada linha do tabuleiro
+    }
+
+    return 0;
+}
 
     // Nível Aventureiro - Expansão do Tabuleiro e Posicionamento Diagonal
     // Sugestão: Expanda o tabuleiro para uma matriz 10x10.
@@ -29,7 +61,7 @@ int main() {
     // Exemplo para habilidade em octaedro:
     // 0 0 1 0 0
     // 0 1 1 1 0
-    // 0 0 1 0 0
+    // 0 0 1 0 0 
 
     // Exemplo para habilidade em cruz:
     // 0 0 1 0 0
