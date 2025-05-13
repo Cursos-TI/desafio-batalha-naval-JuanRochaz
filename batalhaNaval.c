@@ -136,28 +136,148 @@ int main() {
     exibirTabuleiro(tabuleiro);
 
     return 0;
-}
+} 
 
     // Nível Mestre - Habilidades Especiais com Matrizes
-    // Sugestão: Crie matrizes para representar habilidades especiais como cone, cruz, e octaedro.
-    // Sugestão: Utilize estruturas de repetição aninhadas para preencher as áreas afetadas por essas habilidades no tabuleiro.
-    // Sugestão: Exiba o tabuleiro com as áreas afetadas, utilizando 0 para áreas não afetadas e 1 para áreas atingidas.
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
 
-    // Exemplos de exibição das habilidades:
-    // Exemplo para habilidade em cone:
-    // 0 0 1 0 0
-    // 0 1 1 1 0
-    // 1 1 1 1 1
-    
-    // Exemplo para habilidade em octaedro:
-    // 0 0 1 0 0
-    // 0 1 1 1 0
-    // 0 0 1 0 0 
+// Constantes
+#define TAMANHO_TABULEIRO 10
+#define TAMANHO_NAVIO 3
+#define TAMANHO_HABILIDADE 5
 
-    // Exemplo para habilidade em cruz:
-    // 0 0 1 0 0
-    // 1 1 1 1 1
-    // 0 0 1 0 0
+// Exibe o tabuleiro com os valores (0 = água, 3 = navio, 5 = habilidade)
+void exibirTabuleiro(int tabuleiro[TAMANHO_TABULEIRO][TAMANHO_TABULEIRO]) {
+    printf("   A B C D E F G H I J\n");
+    for (int i = 0; i < TAMANHO_TABULEIRO; i++) {
+        printf("%2d ", i + 1);
+        for (int j = 0; j < TAMANHO_TABULEIRO; j++) {
+            printf("%d ", tabuleiro[i][j]);
+        }
+        printf("\n");
+    }
+}
 
-   
+// Verifica se a posição do navio é válida
+bool posicaoValida(int tabuleiro[TAMANHO_TABULEIRO][TAMANHO_TABULEIRO], int linha, int coluna, int orientacao) {
+    for (int i = 0; i < TAMANHO_NAVIO; i++) {
+        int l = linha;
+        int c = coluna;
+
+        if (orientacao == 0)       c += i;            // Horizontal
+        else if (orientacao == 1)  l += i;            // Vertical
+        else if (orientacao == 2) { l += i; c += i; } // Diagonal crescente
+        else if (orientacao == 3) { l += i; c -= i; } // Diagonal decrescente
+
+        if (l < 0 || l >= TAMANHO_TABULEIRO || c < 0 || c >= TAMANHO_TABULEIRO || tabuleiro[l][c] != 0)
+            return false;
+    }
+    return true;
+}
+
+// Posiciona o navio no tabuleiro
+void posicionarNavio(int tabuleiro[TAMANHO_TABULEIRO][TAMANHO_TABULEIRO], int linha, int coluna, int orientacao) {
+    if (!posicaoValida(tabuleiro, linha, coluna, orientacao)) {
+        printf("Posição inválida para o navio!\n");
+        return;
+    }
+
+    for (int i = 0; i < TAMANHO_NAVIO; i++) {
+        int l = linha;
+        int c = coluna;
+
+        if (orientacao == 0)       c += i;
+        else if (orientacao == 1)  l += i;
+        else if (orientacao == 2) { l += i; c += i; }
+        else if (orientacao == 3) { l += i; c -= i; }
+
+        tabuleiro[l][c] = 3;
+    }
+}
+
+// Cria habilidade em formato de cone corrigido
+void criarHabilidadeCone(int habilidade[TAMANHO_HABILIDADE][TAMANHO_HABILIDADE]) {
+    // Zera tudo
+    for (int i = 0; i < TAMANHO_HABILIDADE; i++) {
+        for (int j = 0; j < TAMANHO_HABILIDADE; j++) {
+            habilidade[i][j] = 0;
+        }
+    }
+
+    // Define a forma do cone (com a base mais larga)
+    habilidade[0][2] = 1; // topo do cone
+    habilidade[1][1] = 1; habilidade[1][2] = 1; habilidade[1][3] = 1; // segunda linha
+    habilidade[2][0] = 1; habilidade[2][1] = 1; habilidade[2][2] = 1; habilidade[2][3] = 1; habilidade[2][4] = 1; // base do cone
+}
+
+// Cria habilidade em formato de cruz
+void criarHabilidadeCruz(int habilidade[TAMANHO_HABILIDADE][TAMANHO_HABILIDADE]) {
+    for (int i = 0; i < TAMANHO_HABILIDADE; i++) {
+        for (int j = 0; j < TAMANHO_HABILIDADE; j++) {
+            habilidade[i][j] = (i == TAMANHO_HABILIDADE / 2 || j == TAMANHO_HABILIDADE / 2) ? 1 : 0;
+        }
+    }
+}
+
+// Cria habilidade em formato de octaedro (losango em 2D)
+void criarHabilidadeOctaedro(int habilidade[TAMANHO_HABILIDADE][TAMANHO_HABILIDADE]) {
+    // Zera tudo
+    for (int i = 0; i < TAMANHO_HABILIDADE; i++) {
+        for (int j = 0; j < TAMANHO_HABILIDADE; j++) {
+            habilidade[i][j] = 0;
+        }
+    }
+
+    // Define forma de losango (octaedro em 2D)
+    habilidade[0][2] = 1;
+    habilidade[1][1] = 1;
+    habilidade[1][2] = 1;
+    habilidade[1][3] = 1;
+    habilidade[2][2] = 1;
+}
+
+// Aplica habilidade no tabuleiro com valor definido
+void aplicarHabilidade(int tabuleiro[TAMANHO_TABULEIRO][TAMANHO_TABULEIRO], int linha, int coluna, int habilidade[TAMANHO_HABILIDADE][TAMANHO_HABILIDADE], int valor) {
+    for (int i = 0; i < TAMANHO_HABILIDADE; i++) {
+        for (int j = 0; j < TAMANHO_HABILIDADE; j++) {
+            if (habilidade[i][j] == 1) {
+                int l = linha + i - (TAMANHO_HABILIDADE / 2);
+                int c = coluna + j - (TAMANHO_HABILIDADE / 2);
+                if (l >= 0 && l < TAMANHO_TABULEIRO && c >= 0 && c < TAMANHO_TABULEIRO) {
+                    tabuleiro[l][c] = valor;
+                }
+            }
+        }
+    }
+}
+
+// Função principal
+int main() {
+    int tabuleiro[TAMANHO_TABULEIRO][TAMANHO_TABULEIRO] = {0};
+    int habilidade[TAMANHO_HABILIDADE][TAMANHO_HABILIDADE];
+
+    // Posicionar navio
+    posicionarNavio(tabuleiro, 0, 0, 0);
+
+    // Cone (valor 5)
+    criarHabilidadeCone(habilidade);
+    aplicarHabilidade(tabuleiro, 2, 2, habilidade, 5);
+
+    // Cruz (valor 6)
+    criarHabilidadeCruz(habilidade);
+    aplicarHabilidade(tabuleiro, 2, 7, habilidade, 6);
+
+    // Octaedro (valor 7)
+    criarHabilidadeOctaedro(habilidade);
+    aplicarHabilidade(tabuleiro, 7, 2, habilidade, 7);
+
+    // Cone novamente no canto inferior direito
+    criarHabilidadeCone(habilidade);
+    aplicarHabilidade(tabuleiro, 7, 7, habilidade, 5);
+
+    // Exibir tabuleiro
+    exibirTabuleiro(tabuleiro);
+    return 0;
 }
